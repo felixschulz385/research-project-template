@@ -32,3 +32,4 @@ truth for the next project too.
 8. [`docs/08-repository-skeleton.md`](docs/08-repository-skeleton.md) — the full directory tree
 9. [`docs/09-data-and-output-storage.md`](docs/09-data-and-output-storage.md) — what's tracked in git vs. gitignored, and where
 10. [`docs/10-repo-hygiene.md`](docs/10-repo-hygiene.md) — `.gitignore` contents, license, remaining per-project decisions
+11. [`docs/11-verification.md`](docs/11-verification.md) — the `data summary`/`data verify` CLI verbs and the verification package backing them

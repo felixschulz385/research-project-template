@@ -53,10 +53,16 @@ otherwise use this structure as-is.
 │   │   │   ├── registry.py         # self-registration + lazy import
 │   │   │   ├── layout.py           # the one module that builds every on-disk path
 │   │   │   ├── steps.py            # PipelineStep enum, StepTarget, completion helpers
-│   │   │   ├── verify.py
 │   │   │   └── <source>.py | <source>/   # one file, promoted to a package as complexity requires
 │   │   ├── common/                 # shared infra: fetch, hpc, dask/spark clients, geobox, etc.
-│   │   └── assemble/                # the join/build step producing analysis-ready output
+│   │   ├── assemble/                # the join/build step producing analysis-ready output
+│   │   └── verification/            # `data summary`/`data verify` — see 11-verification.md
+│   │       ├── __main__.py
+│   │       ├── core.py
+│   │       ├── checks.py
+│   │       ├── fingerprint.py
+│   │       ├── sources.py
+│   │       └── constants.py
 │   ├── analysis/
 │   │   ├── core/
 │   │   ├── execution/
@@ -71,6 +77,7 @@ otherwise use this structure as-is.
 │   ├── conftest.py                 # states the __init__.py convention explicitly
 │   ├── cli/
 │   ├── data/
+│   │   └── verification/
 │   └── analysis/
 └── output/
     ├── figures/                    # tracked
@@ -90,6 +97,7 @@ otherwise use this structure as-is.
 | `src/data/sources/` | One module/package per pluggable data source. See [`02-source-pipeline-architecture.md`](02-source-pipeline-architecture.md). |
 | `src/data/common/` | Infrastructure shared across sources (not source-specific logic). |
 | `src/data/assemble/` | Joins prepared sources into the analysis-ready dataset. |
+| `src/data/verification/` | Backs `data summary`/`data verify`. See [`11-verification.md`](11-verification.md). |
 | `src/analysis/` | Estimation, orchestration, and rendering of analysis results. |
 | `src/experiments/` | Exploratory notebooks, deliberately unmaintained and separate from the pipeline. |
 | `scripts/` | Standalone maintenance/one-off scripts not owned by any one source. |
