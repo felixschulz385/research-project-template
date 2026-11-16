@@ -1,0 +1,51 @@
+name: Template
+
+# The rules pass the docs checker, and the template renders into projects that pass their own
+# checks, in two configurations.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python template/scripts/docs.py --root . check
+
+  render:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: research-pipeline-hpc
+            data: >-
+              --data project_name="Demo Project" --data hpc=true --data restricted_data=true
+              --data restricted_patterns="vendor_db" --data first_line=demo-line
+          - name: software-minimal
+            data: >-
+              --data project_name="tool-x" --data doc_profile=software --data pipeline=false
+              --data license=none
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install copier ruff pytest pyyaml
+      - name: Render ${{ matrix.name }}
+        run: copier copy --defaults --trust --vcs-ref HEAD ${{ matrix.data }} . "$RUNNER_TEMP/p"
+      - name: Checks of the rendered project
+        working-directory: ${{ runner.temp }}/p
+        run: |
+          git init -q
+          python scripts/docs.py index
+          python scripts/docs.py check
+          ruff check .
+          pip install --no-deps -e .
+          pytest -q

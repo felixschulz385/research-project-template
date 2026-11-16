@@ -1,0 +1,22 @@
+"""The analysis specification, shared by every line of work.
+
+Put here, once: the outcome, the fixed effects, the clusters, the sample, the function that
+builds and caches the analysis panel, and the figure style. Lines of work import it instead of
+restating the specification (template rule: docs/analysis/code-and-notebooks.md).
+"""
+from __future__ import annotations
+
+from pathlib import Path
+
+
+def project_root(start: Path | None = None) -> Path:
+    """The repository root: the nearest folder upward that holds ``pyproject.toml``."""
+    here = (start or Path.cwd()).resolve()
+    return next(p for p in [here, *here.parents] if (p / "pyproject.toml").exists())
+
+
+FIGURES = "output/figures"          # figures go to output/figures/<slug>/<name>.{pdf,png}
+
+
+def style() -> None:
+    """The project's one figure style (journal widths, font, sizes). Fill in once."""

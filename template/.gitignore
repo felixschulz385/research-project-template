@@ -1,0 +1,31 @@
+# Data (regenerate via the pipeline; never commit bulk data)
+/data_nobackup/
+scratch_nobackup/
+
+# Restricted data: figures and files that show restricted records
+restricted/
+
+# Logs
+/log
+*.log
+
+# Secrets and local-only config
+**/secrets
+*.local.yaml
+.env.local
+
+# Editor / agent / OS artifacts (._* are macOS metadata files on network mounts)
+.vscode/
+.codex
+.claude/
+.DS_Store
+._*
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+.ipynb_checkpoints/

@@ -1,0 +1,13 @@
+"""The console entry point runs and lists the registered sources."""
+from {{ package }}.cli.main import main
+
+
+def test_data_list_runs(capsys):
+    assert main(["data", "list"]) == 0
+    assert "source" in capsys.readouterr().out
+
+
+def test_unknown_domain_is_an_argparse_error():
+    import pytest
+    with pytest.raises(SystemExit):
+        main(["nope"])

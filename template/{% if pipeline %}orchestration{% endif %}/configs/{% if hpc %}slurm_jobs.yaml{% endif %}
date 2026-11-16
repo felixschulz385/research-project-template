@@ -1,0 +1,8 @@
+# Per-job SLURM resources (template rule: docs/modules/hpc-slurm.md). Key: <source>.<step>
+# (or <source>.<step>.<phase>), plus keys for non-source jobs. Override per run with --slurm-*.
+default:
+  time: "02:00:00"
+  mem: 16G
+  cpus: 4
+  qos: ""
+  partition: ""

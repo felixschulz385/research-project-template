@@ -1,0 +1,14 @@
+"""What the ``data`` verbs do."""
+from __future__ import annotations
+
+from {{ package }}.data.sources import registry
+
+
+def list_sources(args) -> None:
+    specs = registry.all_specs()
+    if not specs:
+        print("no sources registered (add one: src/{{ package }}/data/sources/<key>.py)")
+        return
+    for s in specs:
+        req = ", ".join(f"{src}.{step.value}" for _, src, step in s.requires) or "—"
+        print(f"{s.id:<24} steps: {', '.join(st.value for st in s.steps):<20} requires: {req}")

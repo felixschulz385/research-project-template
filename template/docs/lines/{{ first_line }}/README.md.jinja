@@ -1,0 +1,31 @@
+---
+type: charter
+state: proposed
+updated: {{ '%Y-%m-%d' | strftime }}
+line: {{ first_line }}
+branch: line/{{ first_line }}
+summary: "One line: the question, and once there is one, the answer"
+---
+
+# {{ first_line }}
+
+**Question.** What does this line of work ask, in one or two sentences?
+
+**Why now.** What motivates it?
+
+**Scope.** What it covers and what it deliberately leaves out.
+
+**State.** Proposed. **Next:** {% if doc_profile == 'research' %}the first pre-spec (`python scripts/docs.py new prespec {{ first_line }} <name>`){% else %}the first spec (`python scripts/docs.py new spec {{ first_line }}`){% endif %}.
+
+**Branch.** `line/{{ first_line }}`, from `main`.
+
+## Documents
+
+<!-- docs:begin docs dir=. recursive -->
+<!-- docs:end -->
+
+## Related
+
+- Code: `src/{{ package }}/analysis/{{ first_line | replace('-', '_') }}*.py`
+- Notebooks: `notebooks/{{ first_line }}/`
+- Figures: `output/figures/{{ first_line }}/`

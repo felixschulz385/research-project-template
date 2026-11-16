@@ -1,0 +1,26 @@
+---
+type: spec
+state: draft
+updated: {{date}}
+line: {{line}}
+summary: "What this specifies, in one line"
+---
+
+# {{title}}: Specification
+
+<!-- A spec fixes what is built before it is built. States: draft → agreed → implemented
+     (or dropped). Change it through the change log once agreed. -->
+
+## Goal
+
+## Requirements
+
+## Design
+
+## Out of scope
+
+## Acceptance
+
+## Change log
+
+- **{{date}}, draft.**

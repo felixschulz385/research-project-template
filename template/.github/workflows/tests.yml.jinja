@@ -1,0 +1,43 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+{% raw %}
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    # Documentation conventions (docs/conventions.md). Standard library only.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python scripts/docs.py check
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/ruff-action@v3
+
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -el {0}       # login shell, so the micromamba env is on PATH
+    steps:
+      - uses: actions/checkout@v4
+      # conda-lock.yml when it exists (the lock), environment.yml otherwise
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: ${{ hashFiles('conda-lock.yml') != '' && 'conda-lock.yml' || 'environment.yml' }}
+          environment-name: ci
+          cache-environment: true
+      - run: pip install -e . && pytest -q
+{%- endraw %}

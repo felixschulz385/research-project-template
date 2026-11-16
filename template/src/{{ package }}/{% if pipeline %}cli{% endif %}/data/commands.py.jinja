@@ -1,0 +1,16 @@
+"""argparse wiring of the ``data`` domain."""
+from __future__ import annotations
+
+import argparse
+
+from {{ package }}.cli.common import add_config_arg, add_logging_args
+from {{ package }}.cli.data import handlers
+
+
+def register(domains: argparse._SubParsersAction) -> None:
+    data = domains.add_parser("data", help="data sources: list, run, summary, verify")
+    verbs = data.add_subparsers(dest="verb", metavar="VERB", required=True)
+    ls = verbs.add_parser("list", help="the registered sources, their steps and prerequisites")
+    add_config_arg(ls)
+    add_logging_args(ls)
+    ls.set_defaults(func=handlers.list_sources)

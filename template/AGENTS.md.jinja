@@ -1,0 +1,69 @@
+# AGENTS.md
+
+Working notes for coding agents in this repository (`CLAUDE.md` imports this file). Keep it to
+rules and pointers: status lives in the docs (`docs/conventions.md`), and the State table below
+is generated from the line charters. Update this file in the same commit as any change to the
+layout or rules below.
+
+## State
+
+Generated from the line charters (`docs/lines/<slug>/README.md`) by `python scripts/docs.py
+index`; edit a charter, not this table. Each line's next step is in its charter.
+
+<!-- docs:begin lines -->
+<!-- docs:end -->
+
+- **Start of a session:** read the charter of the line you work on, then its record.
+- **New work** starts as a new line: `python scripts/docs.py new line <slug>`, a branch
+  `line/<slug>` from `main`{% if doc_profile == 'research' %}, and a pre-spec (`new prespec <slug> <name>`) before anything
+  runs{% endif %}.
+
+## Hard rules
+{% if restricted_data %}
+- **Restricted data:** nothing at record level in any commit: file contents, notebook outputs,
+  figures, docs or commit messages. Aggregate results are allowed. Figures that show records go to
+  `output/figures/restricted/` (git-ignored). Patterns: `.githooks/restricted-patterns.txt`
+  (template rule: `docs/modules/restricted-data.md`).
+{%- endif %}
+{%- if doc_profile == 'research' %}
+- **Pre-specification:** every analysis step has rules (◇) written before it loads an outcome;
+  change them only through the pre-spec's change log, never after seeing a result the change
+  could be fitted to.
+{%- endif %}
+- Commit only when asked. On `main`, branch first for anything that is not documentation.
+
+## Environment
+
+- **Python:** the `{{ package }}` conda environment, installed from `conda-lock.yml`
+  (`environment.yml` is the input; regenerate the lock when it changes).
+{%- if pipeline %}
+- **Data root** (git-ignored) is set per machine in `orchestration/configs/{{ package }}.local.yaml`.
+{%- endif %}
+{%- if hpc %}
+- **Cluster:** <login, compute and transfer nodes; which have internet; the proxy>. Large
+  downloads run on the transfer node (`orchestration/scripts/`); jobs via `--slurm`.
+{%- endif %}
+{%- if pipeline %}
+
+## Data pipeline
+
+- Every new dataset is a module in `src/{{ package }}/data/sources/`, listed in `registry.py`, with
+  a config block and a page (`python scripts/docs.py new source <key>`).
+- CLI: `{{ package }} data list`; `{{ package }} data run --source <key> --step <step>` once sources exist.
+- Cross-source inputs are read by artefact path (`layout.py`), never by importing another
+  source's class. Prerequisites go in `REQUIRES` and point at a PREPARE step.
+{%- endif %}
+
+## Analysis
+
+- **Specification:** `src/{{ package }}/analysis/spec.py`. One module per line of work:
+  `src/{{ package }}/analysis/<slug>*.py`.
+- **Notebooks:** `notebooks/<slug>/`; they find the project root by searching upward for
+  `pyproject.toml` and keep their outputs (runs of record){% if restricted_data %} unless they read restricted data{% endif %}.
+
+## Docs conventions
+
+The rules are in [`docs/conventions.md`](docs/conventions.md): docs by line of work, front
+matter on every doc, generated tables (`python scripts/docs.py index`), `depends_on` for derived
+docs, and `python scripts/docs.py check` in the pre-commit hook and CI. Bump a doc's `updated`
+when a change is of substance.

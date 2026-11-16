@@ -1,0 +1,31 @@
+"""``{{ package }} <domain> <verb>``: build_parser() and main() (template rule: docs/pipeline/cli.md)."""
+from __future__ import annotations
+
+import argparse
+import logging
+
+from {{ package }}.cli import data
+from {{ package }}.cli.common import setup_logging
+
+logger = logging.getLogger(__name__)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="{{ package }}", description="{{ project_name }}")
+    domains = parser.add_subparsers(dest="domain", metavar="DOMAIN", required=True)
+    data.register(domains)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Run one command; return 0 on success and 1 on error, never a bare traceback."""
+    setup_logging()
+    args = build_parser().parse_args(argv)
+    try:
+        args.func(args)
+        return 0
+    except SystemExit as exc:
+        return exc.code if isinstance(exc.code, int) else 1
+    except Exception as exc:  # noqa: BLE001 - the top level reports every error
+        logger.exception("unexpected error: %s", exc)
+        return 1

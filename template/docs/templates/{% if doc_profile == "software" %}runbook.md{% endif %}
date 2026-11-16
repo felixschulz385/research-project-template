@@ -1,0 +1,20 @@
+---
+type: runbook
+state: current
+updated: {{date}}
+line: {{line}}
+summary: "How to operate this: what it runs, how to check it, what to do when it fails"
+---
+
+# {{title}}: Runbook
+
+## What runs, where
+
+## How to check it is healthy
+
+## When it fails
+
+| Symptom | Cause | Fix |
+|---|---|---|
+
+## Contacts and access

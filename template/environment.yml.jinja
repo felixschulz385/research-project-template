@@ -1,0 +1,22 @@
+# The dependency input: edit this file, then regenerate the lock in the same commit:
+#   conda-lock lock -f environment.yml -p linux-64 -p osx-arm64
+# CI and new machines install from conda-lock.yml (docs/repository/environment.md in the
+# template). Created from research-project-template; not yet verified against a full run.
+name: {{ package }}
+channels:
+  - conda-forge
+dependencies:
+  - python={{ python_version }}
+  - pip
+  - pytest
+  - ruff
+  - conda-lock
+  - ipykernel
+  - nbconvert
+  - numpy
+  - pandas
+{%- if pipeline %}
+  - pyyaml
+{%- endif %}
+  - pip:
+      - -e .

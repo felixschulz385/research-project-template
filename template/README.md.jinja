@@ -1,0 +1,26 @@
+# {{ project_name }}
+
+{{ description or "<One paragraph: the research question and why it matters.>" }}
+
+## Lines of work
+
+Generated from each line's charter in [`docs/lines/`](docs/lines/):
+
+<!-- docs:begin lines -->
+<!-- docs:end -->
+
+## Quick start
+
+```bash
+conda-lock install -n {{ package }} conda-lock.yml   # or: conda env create -f environment.yml
+conda activate {{ package }} && pip install -e .
+./.githooks/install.sh                           # notebooks, restricted data, docs
+python scripts/docs.py check                     # documentation conventions
+{%- if pipeline %}
+{{ package }} data list                               # registered data sources
+{%- endif %}
+```
+
+Everything else is in [`docs/`](docs/README.md). This project was created from
+[research-project-template](https://github.com/felixschulz385/research-project-template);
+`copier update` brings in its later changes.

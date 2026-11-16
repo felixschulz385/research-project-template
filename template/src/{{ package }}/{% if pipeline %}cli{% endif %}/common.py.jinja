@@ -1,0 +1,26 @@
+"""Helpers every domain uses; defined here once and imported everywhere else."""
+from __future__ import annotations
+
+import argparse
+import logging
+
+DEFAULT_CONFIG = "orchestration/configs/{{ package }}.yaml"
+
+
+def setup_logging(level: str = "INFO", debug: bool = False) -> None:
+    logging.basicConfig(level=logging.DEBUG if debug else getattr(logging, level),
+                        format="%(asctime)s %(levelname)s %(name)s: %(message)s", force=True)
+
+
+def add_logging_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--log-level", default="INFO")
+    parser.add_argument("--debug", action="store_true")
+
+
+def add_config_arg(parser: argparse.ArgumentParser, default: str | None = DEFAULT_CONFIG) -> None:
+    parser.add_argument("--config", default=default, required=default is None,
+                        help="the unified configuration file")
+
+
+def add_source_arg(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--source", required=True, help="a source defined in the configuration")

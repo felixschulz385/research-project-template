@@ -1,0 +1,85 @@
+# Copier template: `copier copy gh:felixschulz385/research-project-template <dir>`,
+# later `copier update` inside the project. The rules are in docs/.
+_subdirectory: template
+_min_copier_version: "9.0"
+_answers_file: .copier-answers.yml
+
+project_name:
+  type: str
+  help: Project name (free text)
+  validator: "{% if not project_name.strip() %}required{% endif %}"
+
+package:
+  type: str
+  help: Python package name (src/<package>/, console script, conda env)
+  default: "{{ project_name | lower | replace(' ', '_') | replace('-', '_') }}"
+  validator: "{% if not package.isidentifier() or package != package.lower() %}a lowercase Python identifier{% endif %}"
+
+description:
+  type: str
+  help: One sentence on the research question
+  default: ""
+
+author:
+  type: str
+  help: Author (for LICENSE)
+  default: ""
+
+python_version:
+  type: str
+  default: "3.11"
+  choices: ["3.11", "3.12", "3.13"]
+
+license:
+  type: str
+  help: License (docs/repository/storage-and-hygiene.md)
+  default: MIT
+  choices:
+    MIT: MIT
+    BSD-3-Clause: BSD-3-Clause
+    "CC-BY-4.0 (written material)": CC-BY-4.0
+    "None yet": none
+
+doc_profile:
+  type: str
+  help: Documentation profile (docs/workflow/documentation.md)
+  default: research
+  choices:
+    "research: pre-specs, results, outline, literature": research
+    "software: specs, runbooks": software
+
+pipeline:
+  type: bool
+  help: A data pipeline (CLI, sources, config)? (docs/pipeline/)
+  default: true
+
+hpc:
+  type: bool
+  help: Runs on a SLURM cluster? (docs/modules/hpc-slurm.md)
+  default: false
+  when: "{{ pipeline }}"
+
+restricted_data:
+  type: bool
+  help: Licensed or confidential data? (docs/modules/restricted-data.md)
+  default: false
+
+restricted_patterns:
+  type: str
+  help: Regexes naming the restricted sources, ids and file words (comma-separated)
+  default: ""
+  when: "{{ restricted_data }}"
+
+first_line:
+  type: str
+  help: Slug of the first line of work (empty for none yet)
+  default: ""
+  validator: "{% if first_line and (first_line != first_line.lower() or ' ' in first_line or '_' in first_line) %}lowercase, hyphenated{% endif %}"
+
+_message_after_copy: |
+  Next, in {{ _copier_conf.dst_path }}:
+    git init && git add -A
+    conda env create -f environment.yml && conda activate {{ package }} && pip install -e .
+    ./.githooks/install.sh
+    python scripts/docs.py index && python scripts/docs.py check
+  Then lock the environment: conda-lock lock -f environment.yml -p linux-64 -p osx-arm64

@@ -1,0 +1,38 @@
+"""Which sources exist. Each source module calls ``register()`` at import; listing imports only
+those light modules, and a source's heavy dependencies load only when it runs."""
+from __future__ import annotations
+
+import importlib
+from dataclasses import dataclass
+
+from .steps import Step
+
+# One entry per source module, added as sources are written, e.g. "{{ package }}.data.sources.gadm"
+SOURCE_MODULES: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class SourceSpec:
+    id: str
+    module: str
+    cls: str
+    steps: tuple[Step, ...]
+    requires: tuple[tuple[Step, str, Step], ...] = ()
+
+
+_SPECS: dict[str, SourceSpec] = {}
+
+
+def register(source_id, module, cls, steps, requires=()) -> None:
+    _SPECS[source_id] = SourceSpec(source_id, module, cls, tuple(steps), tuple(requires))
+
+
+def all_specs() -> list[SourceSpec]:
+    for m in SOURCE_MODULES:
+        importlib.import_module(m)
+    return [_SPECS[k] for k in sorted(_SPECS)]
+
+
+def create(source_id: str, config: dict, **kw):
+    spec = next(s for s in all_specs() if s.id == source_id)
+    return getattr(importlib.import_module(spec.module), spec.cls)(config, **kw)

@@ -1,0 +1,14 @@
+# Configuration for the docs tool, run on the template's own rules:
+#   python template/scripts/docs.py --root . check | index
+root = "docs"
+lines = "docs/lines"            # not used by the rules
+templates = "docs/templates"    # not used by the rules
+extra = ["README.md"]
+notebooks = []
+exempt = []
+
+[types.rule]                    # one decision: Decision, Why, How, Per-project choices, Checked by
+states = ["proposed", "current", "retired"]
+
+[types.index]
+states = ["current"]

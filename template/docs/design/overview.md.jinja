@@ -1,0 +1,19 @@
+---
+type: design
+state: current
+updated: {{ '%Y-%m-%d' | strftime }}
+summary: "The system at a glance; later records are dated YYYY-MM-<topic>.md"
+---
+
+# {{ project_name }}: overview
+
+## Decision
+
+The architecture at a glance:{% if pipeline %} the data pipeline (sources, steps, assembly), {% endif %} the analysis
+(`src/{{ package }}/analysis/`), and how they meet.
+
+## Reasoning
+
+## Rejected alternatives
+
+## Consequences
