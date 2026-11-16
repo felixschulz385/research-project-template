@@ -48,6 +48,12 @@ relevant job key here to render the sbatch script; per-invocation
 `--slurm-*` flags override the looked-up defaults for that one submission
 only.
 
+## Per-machine settings
+
+Machine-specific values (the data root, scratch locations) go in
+`orchestration/configs/<project>.local.yaml`, git-ignored, read on top of the unified config. The
+unified config never hard-codes an absolute path.
+
 ## Local override configs
 
 Debug/local config variants (`orchestration/configs/debug/`) exist for

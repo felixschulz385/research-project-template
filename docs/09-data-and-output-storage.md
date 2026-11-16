@@ -4,17 +4,17 @@
 
 | Path | Tracked? | Why |
 |---|---|---|
-| `output/figures/`, `output/documents/`, `output/tables/`, `output/presentations/` | Tracked | Citable/shippable deliverables — figures, papers, tables, slides. |
-| `output/analysis/` | Gitignored | Regeneratable model-run output (results, manifests, summaries) — reproducible from source + the pipeline, not archived. |
-| `output/webpage/` (if present) | Tracked, except its own build artifacts | The site source is tracked; its generated `_site/`/cache directories are gitignored. |
-| `/data` (raw + processed pipeline data) | Gitignored | Bulk data never belongs in git; regenerate via the pipeline or fetch from source. |
-| `scratch_nobackup/` (or equivalent large-scratch dir) | Gitignored | Disposable working files (spill files, part files, temp extraction dirs). |
-| `src/experiments/*.ipynb` | Tracked, but hook-checked | Exploratory notebooks are kept, but a pre-commit hook (see [`07-ci-and-hooks.md`](07-ci-and-hooks.md)) strips or blocks committed cell outputs unless the notebook is explicitly whitelisted. |
+| `output/notebooks/<slug>/` | Tracked, with outputs | Runs of record. Notebooks that read restricted data are committed without outputs (pre-commit hook, see [`07-ci-and-hooks.md`](07-ci-and-hooks.md)). |
+| `output/figures/`, `output/tables/`, `output/documents/`, `output/presentations/` | Tracked | Citable deliverables. |
+| `output/figures/restricted/` (any `restricted/`) | Gitignored | Figures that show restricted records. |
+| `output/webpage/` (if present) | Tracked, except its build artifacts | The site source is tracked; `_site/` and caches are not. |
+| `<data_root>/` (`data_nobackup/`) | Gitignored | Raw and prepared pipeline data, derived analysis caches, literature PDFs (`literature/<topic>/`). Regenerate via the pipeline or fetch from source. |
+| `scratch_nobackup/` | Gitignored | Disposable working files. |
 
 ## Raw/processed data directory convention
 
-All pipeline data lives under one gitignored root (`/data`, or a
-project-specific name), laid out consistently across every source through
+All pipeline data lives under one gitignored root (`data_nobackup/`, or a
+project-specific name, resolved per machine by `orchestration/configs/<project>.local.yaml`), laid out consistently across every source through
 the single `layout.py` path-builder (see
 [`02-source-pipeline-architecture.md`](02-source-pipeline-architecture.md)).
 Pick one physical layout convention and state it in `layout.py`'s own
@@ -43,13 +43,14 @@ overridable via an environment variable (e.g.
 `<PROJECT>_SCRATCH_DIR`) so a job can point it at a node-local fast disk
 (`$TMPDIR`-equivalent) when the cluster provides one.
 
-## Exploratory notebooks
+## Exploratory work
 
-`src/experiments/` is a flat, deliberately unmaintained space for
-exploratory notebooks, one-off analysis scripts, and diagnostic images. It
-is not refactored to match the maintained pipeline's conventions and is
-not covered by the test suite. Keep it clearly separated from
-`src/analysis/` (the maintained analysis pipeline) and `src/data/` (the
-maintained data pipeline) — never let exploratory code get imported by
-maintained code, and never let maintained code live inside
-`src/experiments/` "temporarily."
+There is no `src/experiments/`. Exploration happens in a notebook in the line's
+`output/notebooks/<slug>/` folder; when the step is recorded, it is deleted or promoted into the
+line's analysis module ([`14-analysis-and-notebooks.md`](14-analysis-and-notebooks.md)). An
+unmaintained scratch folder accumulates code nobody can run and outputs nobody can trust.
+
+## Literature
+
+PDFs of the papers a line reads are kept (git-ignored) under
+`<data_root>/literature/<topic>/`, named by a citation key that the line's `literature.md` uses.

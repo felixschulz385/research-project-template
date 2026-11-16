@@ -57,6 +57,13 @@ by hand.
 Do not present an unverified or partially-reconstructed environment file as
 if it were authoritative — say plainly what it is and isn't.
 
+## Repository tools need only the standard library
+
+The git hooks and `scripts/docs.py` use only the Python standard library (3.11+, for
+`tomllib`), so they run in a hook or a CI job without the project environment. Keep it that
+way: a hook that needs the conda environment silently stops running when the environment is
+not active.
+
 ## `.env`
 
 A project-root `.env` file may set `PYTHONPATH=.` if the project relies on

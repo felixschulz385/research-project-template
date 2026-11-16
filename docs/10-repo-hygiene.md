@@ -2,13 +2,17 @@
 
 ## `.gitignore` baseline
 
-Start every new project's `.gitignore` from this set, adding project-specific
+Start every new project's `.gitignore` from this set (also in
+[`../scaffold/.gitignore`](../scaffold/.gitignore)), adding project-specific
 entries as needed:
 
 ```gitignore
 # Data (regenerate via the pipeline; never commit bulk data)
-/data
+/data_nobackup/
 scratch_nobackup/
+
+# Restricted data: figures and files that show restricted records
+restricted/
 
 # Logs
 /log
@@ -19,11 +23,12 @@ scratch_nobackup/
 *.local.yaml
 .env.local
 
-# Editor / agent artifacts
+# Editor / agent / OS artifacts (._* are macOS metadata files on network mounts)
 .vscode/
 .codex
 .claude/
 .DS_Store
+._*
 
 # Python build artifacts
 __pycache__/
@@ -31,15 +36,25 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .venv/
-
-# Regeneratable analysis output (see 09-data-and-output-storage.md)
-/output/analysis/
 ```
 
 Carve back in, with a `!` negation and a comment explaining why, any
 specific path that would otherwise be caught by a broad rule above but
 must be tracked (e.g. a generated site under `output/webpage/` that is
 tracked while its own build cache is not).
+
+## Cleaning up
+
+- **Tag before removing code.** Before deleting a framework, a folder of old outputs or a set of
+  one-off scripts, tag the tree (`git tag -a archive/YYYY-MM-<what>`) and push the tag, so the
+  removed code stays one checkout away. Say in the commit which tag holds it.
+- **Delete one-off scripts once they have run.** A migration or a cleanup script that has done
+  its job is noise for the next reader; keep only tools that are run again.
+- **Status before cleanup.** A cleanup that touches docs runs `python scripts/docs.py check`
+  afterwards; moved files keep their front matter, and every link must resolve.
+- **macOS metadata.** Copying a repository through a Mac network mount leaves `._*` files, also
+  inside `.git/` (git reports them as garbage). They are 4 KB AppleDouble files (magic bytes
+  `00 05 16 07`) and safe to delete; ignore them in `.gitignore`.
 
 ## License
 

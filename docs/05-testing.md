@@ -58,3 +58,9 @@ assembly-specific fixtures) rather than lifting subpackage-specific
 fixtures into the root `tests/conftest.py`. Keep the root `conftest.py`
 limited to whatever every test in the tree needs (path setup, the
 `__init__.py`-convention statement above).
+
+## Tools outside `src/`
+
+Standalone tools under `scripts/` that are run again (the docs tool, maintenance tools) have
+tests under `tests/scripts/`, typically running the tool on a throwaway git repository in
+`tmp_path`. One-off scripts that are deleted after use need none.

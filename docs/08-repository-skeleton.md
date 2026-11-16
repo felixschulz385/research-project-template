@@ -1,105 +1,91 @@
 # Repository skeleton
 
-The full directory tree a new project starts from. Adapt names in angle
-brackets (`<project>`, `<domain>`, `<source>`) to the actual project;
-otherwise use this structure as-is.
+The full directory tree a new project starts from. Names in angle brackets are adapted to the
+project; otherwise use this structure as-is. Files marked ⧉ are copied from
+[`../scaffold/`](../scaffold/).
 
 ```
 .
-├── README.md                       # short: purpose, quick start, install — see 06-documentation-conventions.md
+├── README.md                       # ⧉ short: question, lines of work (generated), quick start
+├── CLAUDE.md                       # ⧉ agent instructions — see 13-agent-instructions.md
 ├── LICENSE
-├── environment.yml                 # conda — the dependency source of truth — see 04-environment-and-dependencies.md
-├── pyproject.toml                  # build-backend + package discovery only, no dependency list
+├── environment.yml                 # conda: the dependency source of truth — see 04
+├── pyproject.toml                  # build backend + package discovery only, no dependency list
 ├── .env                            # PYTHONPATH=. if needed
-├── .gitignore                      # see 10-repo-hygiene.md
-├── .github/
-│   └── workflows/                  # CI: tests at minimum; docs/output publishing if applicable
-├── .githooks/
-│   ├── install.sh
-│   ├── pre-commit
-│   └── check-notebook-outputs.py   # see 07-ci-and-hooks.md
-├── docs/
-│   ├── design/
-│   │   ├── 00-overview.md          # numbered decision log — see 06-documentation-conventions.md
-│   │   └── NN-<topic>.md
-│   └── data/
-│       ├── README.md               # index of every registered source
-│       └── <source>/README.md      # one page per source
+├── .gitignore                      # ⧉ see 10-repo-hygiene.md
+├── .github/workflows/tests.yml     # ⧉ docs check + pytest — see 07-ci-and-hooks.md
+├── .githooks/                      # ⧉ notebook outputs, restricted data, docs check — see 07
+├── docs/                           # ⧉ see 06-documentation-conventions.md
+│   ├── README.md                   #   entry point; generated tables
+│   ├── conventions.md              #   the project's copy of the docs rules
+│   ├── docs.toml                   #   doc types and states
+│   ├── templates/                  #   one template per doc type
+│   ├── ideas.md
+│   ├── lines/<slug>/               #   one folder per line of work — see 12
+│   │   ├── README.md               #     charter
+│   │   ├── prespec-NN-<step>.md
+│   │   ├── results.md
+│   │   └── notes/
+│   ├── data/
+│   │   ├── README.md               #   index of every registered source
+│   │   └── <source>/README.md
+│   └── design/
+│       ├── 00-overview.md
+│       └── NN-<topic>.md
 ├── orchestration/
 │   ├── configs/
-│   │   ├── <project>.yaml          # unified config — see 03-configuration-and-orchestration.md
+│   │   ├── <project>.yaml          # the unified config — see 03
+│   │   ├── <project>.local.yaml    # per-machine overrides (data root), git-ignored
 │   │   ├── slurm_jobs.yaml
 │   │   └── debug/
 │   └── scripts/
-│       └── <maintenance-task>.sh
+│       ├── <task>.sh               # SLURM wrappers for maintenance, transfer-node fetches
+│       └── LOGGING.md
+├── scripts/
+│   ├── docs.py                     # ⧉ the docs tool (check / index / new)
+│   └── <tool>.py                   # standalone maintenance tools, each with a test
 ├── src/
 │   ├── __init__.py
-│   ├── cli/
+│   ├── cli/                        # `python -m src.cli` — see 01
 │   │   ├── __init__.py
-│   │   ├── __main__.py             # `python -m src.cli` entry point — see 01-entrypoint-and-cli.md
+│   │   ├── __main__.py
 │   │   ├── main.py
 │   │   ├── common.py
-│   │   └── <domain>/
-│   │       ├── __init__.py
-│   │       ├── commands.py
-│   │       └── handlers.py
-│   ├── config/                     # typed config objects (SourceConfig / PipelineContext-equivalent)
+│   │   └── <domain>/{__init__,commands,handlers}.py
+│   ├── config/                     # typed config objects
 │   ├── data/
-│   │   ├── __init__.py
-│   │   ├── pipeline/                # config/context plumbing shared across sources
-│   │   ├── sources/
-│   │   │   ├── __init__.py
-│   │   │   ├── base.py             # the DataSource base class — see 02-source-pipeline-architecture.md
-│   │   │   ├── registry.py         # self-registration + lazy import
-│   │   │   ├── layout.py           # the one module that builds every on-disk path
-│   │   │   ├── steps.py            # PipelineStep enum, StepTarget, completion helpers
-│   │   │   └── <source>.py | <source>/   # one file, promoted to a package as complexity requires
-│   │   ├── common/                 # shared infra: fetch, hpc, dask/spark clients, geobox, etc.
-│   │   ├── assemble/                # the join/build step producing analysis-ready output
-│   │   └── verification/            # `data summary`/`data verify` — see 11-verification.md
-│   │       ├── __main__.py
-│   │       ├── core.py
-│   │       ├── checks.py
-│   │       ├── fingerprint.py
-│   │       ├── sources.py
-│   │       └── constants.py
+│   │   ├── pipeline/               # config/context plumbing shared across sources
+│   │   ├── sources/                # base.py, registry.py, layout.py, steps.py, <source>.py | <source>/ — see 02
+│   │   ├── common/                 # shared infra: fetch, hpc, grid/geobox, ...
+│   │   ├── assemble/               # the join/build step
+│   │   └── verification/           # `data summary` / `data verify` — see 11
 │   ├── analysis/
-│   │   ├── core/
-│   │   ├── execution/
-│   │   ├── io/
-│   │   ├── orchestration/
-│   │   ├── rendering/
-│   │   └── subsets/
-│   ├── viz/                         # standalone plotting helpers, if the project needs them separately
-│   └── experiments/                 # flat, unmaintained scratch space for exploratory notebooks
-├── scripts/                        # maintenance/one-off scripts, not tied to one source
-├── tests/                          # mirrors src/ 1:1 — see 05-testing.md
-│   ├── conftest.py                 # states the __init__.py convention explicitly
-│   ├── cli/
-│   ├── data/
-│   │   └── verification/
-│   └── analysis/
+│   │   ├── spec.py                 # the specification and the analysis panel — see 14
+│   │   └── <slug>*.py              # one module (or a few) per line of work
+│   └── viz/                        # shared plotting helpers, if needed
+├── tests/                          # mirrors src/ (and scripts/) — see 05
+│   ├── conftest.py                 # ⧉ states the __init__.py convention
+│   └── scripts/test_docs_tool.py   # ⧉
 └── output/
-    ├── figures/                    # tracked
-    ├── documents/                  # tracked
+    ├── notebooks/<slug>/           # ⧉ README; runs of record, one folder per line — see 14
+    ├── figures/<slug>/             # tracked
     ├── tables/                     # tracked
-    ├── presentations/              # tracked
-    └── analysis/                   # gitignored, regeneratable
+    ├── documents/                  # tracked
+    └── presentations/              # tracked
 ```
 
 ## What each top-level directory is for
 
 | Directory | Purpose |
 |---|---|
-| `docs/` | Decision log + per-source reference docs. See [`06-documentation-conventions.md`](06-documentation-conventions.md). |
-| `orchestration/` | Configuration files and HPC/Slurm scripts. See [`03-configuration-and-orchestration.md`](03-configuration-and-orchestration.md). |
-| `src/cli/` | The CLI package. See [`01-entrypoint-and-cli.md`](01-entrypoint-and-cli.md). |
-| `src/data/sources/` | One module/package per pluggable data source. See [`02-source-pipeline-architecture.md`](02-source-pipeline-architecture.md). |
-| `src/data/common/` | Infrastructure shared across sources (not source-specific logic). |
-| `src/data/assemble/` | Joins prepared sources into the analysis-ready dataset. |
-| `src/data/verification/` | Backs `data summary`/`data verify`. See [`11-verification.md`](11-verification.md). |
-| `src/analysis/` | Estimation, orchestration, and rendering of analysis results. |
-| `src/experiments/` | Exploratory notebooks, deliberately unmaintained and separate from the pipeline. |
-| `scripts/` | Standalone maintenance/one-off scripts not owned by any one source. |
-| `tests/` | Mirrors `src/`. See [`05-testing.md`](05-testing.md). |
-| `output/` | Deliverables. See [`09-data-and-output-storage.md`](09-data-and-output-storage.md). |
+| `docs/` | Lines of work, data pages, design records, generated indexes. See [`06`](06-documentation-conventions.md), [`12`](12-lines-of-work-and-prespecification.md). |
+| `orchestration/` | Configuration and HPC/SLURM scripts. See [`03`](03-configuration-and-orchestration.md). |
+| `scripts/` | Standalone tools not owned by one source (the docs tool, maintenance). One-off migrations are deleted once done. |
+| `src/cli/` | The CLI package. See [`01`](01-entrypoint-and-cli.md). |
+| `src/data/` | Sources, shared infrastructure, assembly, verification. See [`02`](02-source-pipeline-architecture.md), [`11`](11-verification.md). |
+| `src/analysis/` | The specification and one module per line of work. See [`14`](14-analysis-and-notebooks.md). |
+| `tests/` | Mirrors `src/` and `scripts/`. See [`05`](05-testing.md). |
+| `output/` | Notebooks of record and deliverables. See [`09`](09-data-and-output-storage.md). |
+
+There is no `src/experiments/` and no analysis batch framework: exploration happens in a line's
+notebook folder and is deleted or promoted ([`14`](14-analysis-and-notebooks.md)).

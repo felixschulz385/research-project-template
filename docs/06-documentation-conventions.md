@@ -1,92 +1,122 @@
 # Documentation conventions
 
+The documentation is organised by **line of work** (see
+[`12-lines-of-work-and-prespecification.md`](12-lines-of-work-and-prespecification.md)), every
+doc has a **type** and **states its own status** in a front-matter header, and every index or
+status table is **generated** from those headers by `scripts/docs.py`, which also checks them in
+the pre-commit hook and in CI. The files to copy are in [`../scaffold/`](../scaffold/): the tool,
+its configuration, one template per doc type, and `docs/conventions.md`, the project-side copy
+of these rules.
+
+Why: status written by hand into several places (README, an index table, the agent
+instructions, the doc itself) drifts within days, and folders named after a project's history
+(`successors/`, `analysis/`) force moves and link rewrites every time the history changes.
+
 ## Root `README.md` stays short
 
-The root `README.md` is a pitch, not a manual: research question/purpose,
-a short quick-start (install + one or two example commands), and a link
-into `docs/` for everything else. Do not let exhaustive CLI usage,
-per-source workflow instructions, or architectural reasoning accumulate in
-the root README — push all of that into `docs/` as described below. A
-README that has grown past roughly one screen of prose plus a quick-start
-block is a sign that detail belongs in `docs/` instead.
+A pitch, not a manual: the research question, the generated table of lines of work, a short
+quick start (install, hooks, one or two commands), and a link into `docs/`. Exhaustive CLI
+usage, per-source instructions and architectural reasoning go into `docs/`.
 
-## `docs/design/`: a numbered decision log
-
-For any nontrivial architectural decision — a storage format choice, a
-coordinate/grid system choice, a rework of an existing subsystem, a
-migration — write a numbered file:
+## Layout
 
 ```
-docs/design/00-overview.md
-docs/design/01-<topic>.md
-docs/design/02-<topic>.md
-...
+docs/
+  README.md            entry point; its tables are generated
+  conventions.md       the project's copy of these rules
+  docs.toml            doc types and their states, extra files, notebook folders
+  templates/           one template per doc type
+  ideas.md             unscheduled ideas; each points to its line once started
+  lines/<slug>/        one folder per line of work
+    README.md          the charter (the line's only status)
+    prespec-NN-<step>.md
+    results.md         the record
+    outline.md         (optional) the story, derived from results.md
+    literature.md      (optional)
+    notes/             dated notes: checks, plans, data options, handoffs
+  data/<key>/README.md one page per data source
+  design/NN-<topic>.md numbered infrastructure decisions
 ```
 
-Each design doc states:
+## Doc types and states
 
-1. **The decision** — what was chosen, stated as fact, not as a proposal.
-2. **The reasoning** — why, including the concrete problem it solves.
-3. **Rejected alternatives** — what else was considered and why it lost,
-   so the reasoning doesn't have to be reconstructed from scratch if the
-   same question resurfaces later.
+| Type | Where | States |
+|---|---|---|
+| charter | `lines/<slug>/README.md` | proposed → active → complete / stopped |
+| results | `lines/<slug>/results.md` | current → final |
+| outline | `lines/<slug>/outline.md` | current → final |
+| prespec | `lines/<slug>/prespec-NN-*.md` | draft → confirmed → run → recorded (or withdrawn) |
+| literature | `lines/<slug>/literature.md` | current → final |
+| note | `lines/<slug>/notes/*.md`, or next to what it documents | current → record / superseded |
+| source | `data/<key>/README.md` | current / superseded |
+| design | `design/NN-*.md` | proposed → current / implemented → historical / superseded |
+| index | navigation pages, `conventions.md`, `ideas.md` | current |
 
-`00-overview.md` ends with a "Document map" section linking to every other
-design doc in the set, in reading order, so the whole decision history is
-navigable from one entry point. Cross-link related docs to each other
-directly (`See [`03-x.md`](03-x.md) for ...`) rather than only linking back
-to the overview.
+The types, their states and their order (which is the reading order of the generated tables)
+are configured in `docs/docs.toml`; a project may add types there.
 
-Treat this log as append-only history, not a living spec: once a decision
-is superseded, add a new numbered doc recording the change and why,
-rather than editing the old one to erase what used to be true. The
-current, authoritative state of the system lives in code plus the
-per-module docs described below — the design log is *why*, not *what is
-true right now*.
+## Front matter
 
-## `docs/data/<source>/README.md`: one page per source
-
-Every registered pipeline source (or, more generally, every registered
-pluggable module) gets one documentation page:
-`docs/data/<source>/README.md`, plus one index page,
-`docs/data/README.md`, listing every source with its module path, the
-pipeline steps it implements, its prerequisites, and its config key(s) —
-sourced directly from each source's own `STEPS`/`REQUIRES` class
-attributes and the registry, cross-checked against the config file, not
-inferred from one or the other alone.
-
-Each per-source page covers: what the source is, where each of its stages'
-output lands on disk (per
-[`02-source-pipeline-architecture.md`](02-source-pipeline-architecture.md)'s
-path module), its output schema/variables, and known data-quality caveats
-found in the code or config comments.
-
-These pages are derived from reading code and configuration, not from
-inspecting live data output. Any fact that can only be confirmed by
-running the pipeline and looking at real output (actual date coverage,
-row/tile counts, empirically observed value ranges, on-disk size) must be
-marked explicitly, e.g.:
-
-```
-**TODO (needs live data):** actual row count once a full run completes.
+```yaml
+---
+type: prespec
+state: recorded
+updated: 2026-01-31          # last change of substance
+line: example                # required under docs/lines/<slug>/
+summary: "One line: what it is, or what came out"
+step: 4                      # optional (prespec)
+depends_on: [results.md]     # optional: docs this one is derived from
+note: "…"                    # optional qualifier shown next to the state
+branch: line/example         # charter
+---
 ```
 
-Never state such a fact as if verified when it was only inferred from code.
+## Generated tables
 
-## Ad hoc rework notes
+```markdown
+<!-- docs:begin lines -->                         one row per line (from the charters)
+<!-- docs:begin docs dir=design -->               one row per doc in a folder
+<!-- docs:begin docs dir=data recursive sort=path -->
+<!-- docs:end -->
+```
 
-A single root-level `.md` file documenting an in-flight rework or migration
-(e.g. `some_subsystem_rework.md`) is acceptable as a temporary scratchpad
-while that specific piece of work is active. Once it lands, either fold its
-durable content into a `docs/design/NN-*.md` entry (if it recorded a real
-decision) or delete it — do not let it sit at the repository root
-indefinitely once the rework it describes is finished.
+`python scripts/docs.py index` rewrites them; `check` fails if one is out of date. Put them in
+`docs/README.md`, each charter, the root README and the agent instructions. Never type status
+into a table.
 
-## Module-level docstrings carry local reasoning
+## The checker
 
-For reasoning that's local to one module (why this function does something
-non-obvious, what bug a particular line prevents, what an earlier version
-did differently) prefer a comment or docstring in that file over a
-prose paragraph in `docs/` — file-local reasoning should live next to the
-code it explains so it can't drift out of sync unnoticed. Reserve
-`docs/design/` for decisions that span multiple modules or files.
+`python scripts/docs.py check` (standard library, Python 3.11+) fails on missing or invalid
+metadata, a line folder without a charter, a broken relative link (in `docs/`, the extra files,
+and notebook Markdown cells), a doc older than a doc it `depends_on`, and an out-of-date
+generated table. `python scripts/docs.py new <kind> …` starts a doc from its template.
+
+## Design records
+
+For any nontrivial architectural decision (a storage format, a grid system, a rework, a
+migration), a numbered record `docs/design/NN-<topic>.md`: the decision, the reasoning, the
+rejected alternatives, the consequences. Code cites them by path, so they are **never
+renumbered or renamed**. The log is history, not a living spec: when a decision is superseded,
+write a new record and set the old one's `state` (with a `note`, and a dated banner under its
+title). The current truth lives in code, module docstrings and the data pages.
+
+## Data pages
+
+`docs/data/<key>/README.md` for every registered source, plus the index `docs/data/README.md`
+(module, steps, prerequisites, config keys, sourced from the registry and the config). Each page
+covers what the dataset is, where each stage's output lands (per the path module), its columns,
+and its caveats. They are written from code and configuration; a fact only a real run can
+confirm (coverage, counts, value ranges, sizes) is marked **needs live data** until confirmed.
+
+## Local reasoning stays in code
+
+Reasoning that concerns one module (why a function does something non-obvious, which bug a line
+prevents) goes in that module's docstring or a comment, not in `docs/`. Mechanics (how FETCH
+discovers files, retry logic) live in docstrings; data pages describe what the data is.
+
+## Temporary notes
+
+An in-flight rework or a handoff between agents is a `note` in the relevant line's `notes/` (or
+next to the design record it concerns). When the work lands, set it to `record`, or fold its
+durable content into a design record and set it to `superseded`. No loose `.md` files at the
+repository root.

@@ -34,8 +34,10 @@ python -m src.cli <domain> <verb> [--source <name>] [flags...]
 ```
 
 `main.py`'s `build_parser()` creates one top-level subparser per domain
-(e.g. `data`, `assemble`, `analysis` — name domains after the project's
-actual pipeline stages, not necessarily these three), each domain
+(e.g. `data`, `assemble` — name domains after the project's actual pipeline
+stages). Analysis is not a CLI domain: it runs in `src/analysis/` modules
+called from notebooks (see [`14-analysis-and-notebooks.md`](14-analysis-and-notebooks.md)).
+Add a domain only for work that runs unattended as a batch job, each domain
 registering its own subcommands via a `register(subparsers)` function that
 `main.py` calls. Domains do not share a subparser tree beyond this
 registration point.

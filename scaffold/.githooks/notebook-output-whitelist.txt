@@ -1,0 +1,10 @@
+# Notebooks allowed to commit cell outputs and execution counts.
+#
+# One fnmatch pattern per line, matched against the repo-relative path of each staged .ipynb
+# ('*' matches across '/'). A line starting with '!' blocks the paths it matches again; the
+# last matching line wins. Independently of this list, outputs are blocked in any notebook
+# whose code matches restricted-patterns.txt. Add a '!' line for a notebook that reaches
+# restricted data indirectly (through an analysis module).
+
+# Notebooks under output/notebooks/ are runs of record and keep their outputs.
+output/notebooks/*.ipynb

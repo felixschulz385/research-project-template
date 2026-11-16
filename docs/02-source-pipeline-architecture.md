@@ -101,3 +101,25 @@ every path is built by calling a function in `layout.py`. This is what
 keeps the physical on-disk tree changeable from one place, and it is where
 [`08-repository-skeleton.md`](08-repository-skeleton.md)'s data-directory
 structure is actually implemented, not just documented.
+
+## Cross-source inputs
+
+A source that consumes another source's output reads it **by artefact path** (through the
+path module), never by importing the other source's class. The ordering goes in `REQUIRES`.
+A prerequisite always points at a step that produces a complete, final artefact (a PREPARE
+step): a FETCH target is never "complete" in the sense a consumer needs, because fetching can
+be partial, resumed, or done on another machine.
+
+## Derived aggregations belong in analysis code
+
+A new source is for a dataset that is acquired and prepared. An aggregation of existing
+prepared data for one analysis (a region mean, a population-weighted sum) lives in that line's
+analysis module and caches its result under the data root; it is not a new source.
+
+## Fetching where the network is limited
+
+On clusters whose compute nodes have no internet, FETCH runs on a transfer node (a SLURM wrapper
+in `orchestration/scripts/`), and the pushed data is checked with `data summary`. Small files may
+go through an HTTP proxy if one is configured; an async downloader that ignores proxy variables
+needs a source-level override that downloads with a proxy-aware client. State the network
+constraints in the agent instructions.
