@@ -11,7 +11,7 @@ Rejects staged files that are likely to carry it:
 
 It cannot read content, so it is a backstop: notebooks are covered by
 check-notebook-outputs.py, and docs and commit messages by the rule in the
-agent instructions (CLAUDE.md). Stdlib only.
+agent instructions (AGENTS.md). Stdlib only.
 """
 from __future__ import annotations
 
