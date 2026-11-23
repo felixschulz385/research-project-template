@@ -1,0 +1,37 @@
+---
+name: write-prespec
+description: Draft and confirm a pre-specification for an analysis step before loading an outcome. Use when planning a new analysis step or moving a pre-spec from draft to confirmed.
+---
+
+# Write a pre-specification
+
+Pre-specification is a hard rule in `AGENTS.md`; doc metadata and life cycle are in `docs/conventions.md`.
+
+## Steps
+
+1. **Read context first.** Read `docs/lines/<slug>/README.md`, prior `prespec-*.md` files in that line, `docs/lines/<slug>/results.md` (if present), and `src/{{ package }}/analysis/spec.py`.
+2. **Scaffold the pre-spec.** Choose a short descriptive `<name>` without a step number (order comes from `step` metadata). Run:
+   ```bash
+   python scripts/docs.py new prespec <slug> <name> --title "<Title>"
+   ```
+   This creates `docs/lines/<slug>/prespec-<name>.md` from `docs/templates/prespec.md` with the next `step` number.
+3. **Draft sections 0–4 before anything loads an outcome:**
+   - **§0 Decisions for the author:** list every open choice with a recommended option and plain-language reasoning.
+   - **§1 Questions:** block by block.
+   - **§2 Data:** samples, sources, years, and anything constructed for this step{% if pipeline %} (link the relevant `docs/data/<key>/README.md` pages){% endif %}.
+   - **§3 Specification:** outcome, regressors, fixed effects, clusters, and sample. Reference `src/{{ package }}/analysis/spec.py` instead of restating shared definitions.
+   - **§4 ◇ Rules:** put construction checks (`◇ G…`, loading no outcome) first. For every claim, state what must hold, at what threshold, after which multiple-testing correction, and how the result is labelled otherwise.
+4. **Mark post-hoc context explicitly.** If this step is written after earlier results were seen, state that clearly and label which blocks are confirmatory and which are descriptive.
+5. **Get author decisions.** Present §0 to the user and ask them to decide each open choice. Record every decision inline as `Decided YYYY-MM-DD: …`.
+6. **Confirm before the first fit.** Log any remaining open implementation choices (multiple-testing families, support thresholds, ambiguous wording) in the **Change log**. Update front matter to `state: confirmed` and today's `updated` date, update the **Status** line, and run:
+   ```bash
+   python scripts/docs.py index
+   python scripts/docs.py check
+   ```
+
+## Discipline
+
+- **Life cycle:** `draft` → `confirmed` → `run` → `recorded` (or `withdrawn`).
+- **Rule changes:** change a rule only through the dated **Change log** with a reason, and never after seeing a result the change could be fitted to. Construction checks that load no outcome may adjust construction rules; log them anyway.
+- **Debugging:** test code paths on a placebo (random-noise) outcome so debugging never inspects real results.
+- **Outcomes:** record numbers only in §5 after the run; never edit rules in §5.

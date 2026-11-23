@@ -1,0 +1,36 @@
+---
+name: add-source
+description: Add a new data source to the pipeline with its module, registry entry, config block, documentation page, and verification. Use when integrating a new dataset into the data pipeline.
+---
+
+# Add a data source
+
+Follow the data-pipeline rules in `AGENTS.md` and the doc rules in `docs/conventions.md`.
+
+## Steps
+
+1. **Inspect existing pipeline code.** Read `src/{{ package }}/data/sources/base.py`, `steps.py`, `layout.py`, `registry.py`, and `orchestration/configs/{{ package }}.yaml`. Ask the user to confirm the source `<key>`, stages (`Step`), and any prerequisites if unclear.
+2. **Add on-disk paths in `layout.py`.** Put every raw and prepared path helper in `src/{{ package }}/data/sources/layout.py`; never construct data paths inline inside a source.
+3. **Write the source module.** Create `src/{{ package }}/data/sources/<key>.py` (or a package `<key>/` if it needs internal submodules):
+   - Subclass `DataSource` with `ID = "<key>"`, `STEPS`, and `REQUIRES` (`(my_step, other_source, other_step)`). Every prerequisite must point to a complete `PREPARE` step, never `FETCH`.
+   - Implement `_plan_<step>()` (cheap, side-effect-free, returning `Target` objects with `output` and `inputs`) and `_execute_<step>(target)`.
+   - Read cross-source inputs by path via `layout.py`; never import another source's class.
+   - Register the source at import time with `registry.register(...)`. Keep module-level imports light and import heavy dependencies lazily inside execution helpers.
+   - Keep line-specific derived aggregations in `src/{{ package }}/analysis/<slug>*.py`, not as new sources.
+4. **Register the module.** Add `"{{ package }}.data.sources.<key>"` to `SOURCE_MODULES` in `src/{{ package }}/data/sources/registry.py`.
+5. **Add configuration.** Add a `<key>:` block under `sources:` in `orchestration/configs/{{ package }}.yaml`. Keep all paths relative; per-machine paths belong in `orchestration/configs/{{ package }}.local.yaml`.{% if hpc %} For cluster jobs or transfer-node downloads, check `orchestration/configs/slurm_jobs.yaml` and `orchestration/scripts/`.{% endif %}
+6. **Document the source.** Run:
+   ```bash
+   python scripts/docs.py new source <key> --title "<Title>"
+   ```
+   Fill in `docs/data/<key>/README.md` from code and config (set `Module:` to `src/{{ package }}/data/sources/<key>.py`, list steps, prerequisites, landing paths, columns, and caveats). Mark anything only a live run can confirm as **needs live data**.
+7. **Add verification and tests.** Add correctness checks for the source (expected columns, value ranges, count bounds, staleness against inputs). If `data summary` and `data verify` are not yet implemented in `src/{{ package }}/cli/data/`, add them so sources without rules report `"no rules defined"`, stale outputs fail, and both exit non-zero with itemised failures. Add unit tests under `tests/`.
+8. **Verify everything.** Run:
+   ```bash
+   python scripts/docs.py index
+   python scripts/docs.py check
+   {{ package }} data list
+   ruff check .
+   pytest -q
+   ```
+   Ask the user before committing.

@@ -1,0 +1,39 @@
+---
+name: tidy-repo
+description: Clean up dead code, one-off scripts, macOS metadata, temporary docs, and untracked artifacts safely. Use when tidying the repository or removing obsolete code and files.
+---
+
+# Tidy the repository
+
+Follow `AGENTS.md` and `docs/conventions.md`. Never delete code or files without confirming the plan with the user first.
+
+## Steps
+
+1. **Audit the repository.** Run `git status` and inspect:
+   - Unused code or modules proposed for removal.
+   - Scripts in `scripts/` or the root that were run once and are no longer needed.
+   - Loose `.md` files at the repository root or finished `current` notes under `docs/lines/*/notes/`.
+   - Exploratory notebooks in `notebooks/` that were never promoted to runs of record.
+   - `._*` AppleDouble metadata files anywhere in the working tree or inside `.git/`.
+   - Untracked bulk data, `scratch_nobackup/`, `*.local.yaml`{% if restricted_data %}, secrets, or anything under `restricted/`{% else %}, or secrets{% endif %}.
+   Share the list with the user and ask for confirmation before removing anything.
+2. **Archive-tag before removing code.** Before deleting any tracked code, create an annotated tag on the pre-removal commit:
+   ```bash
+   git tag -a archive/YYYY-MM-<what> -m "Archive <what> before removal"
+   ```
+   Mention the tag name in the removal commit message, and remind the user to push the tag.
+3. **Delete one-off scripts.** Remove scripts that have already run; keep only tools that are run again (with tests in `tests/scripts/`).
+4. **Tidy docs and notebooks.**
+   - Remove loose root `.md` files or move temporary notes into `docs/lines/<slug>/notes/`.
+   - Set finished notes to `state: record` or `state: superseded` (with a link to the replacement).
+   - Delete unpromoted exploratory notebooks and update `notebooks/README.md` if folders changed.
+5. **Remove macOS AppleDouble files.** If `._*` files exist (including in `.git/`), verify they are 4 KB AppleDouble files (magic bytes `00 05 16 07`) and delete them.
+6. **Check `.gitignore` and hygiene.** Confirm data (`data_nobackup/`), `scratch_nobackup/`, `*.local.yaml`{% if restricted_data %}, secrets, and `restricted/`{% else %}, and secrets{% endif %} are ignored and untracked. Carve any intentional `.gitignore` exceptions back in with a comment line and a `!` rule.
+7. **Run checks:**
+   ```bash
+   python scripts/docs.py index
+   python scripts/docs.py check
+   ruff check .
+   pytest -q
+   ```
+8. **Commit only when asked.** Show `git status` and `git diff --stat` and wait for confirmation.

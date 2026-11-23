@@ -1,0 +1,35 @@
+---
+name: end-line
+description: Close a line of work by finalizing its record and charter, refreshing generated tables, and preparing the branch merge. Use when a line of work is complete or being stopped.
+---
+
+# End a line of work
+
+Follow the doc and branch rules in `AGENTS.md` and `docs/conventions.md`.
+
+## Steps
+
+1. **Confirm closure with the user.** Read `docs/lines/<slug>/README.md` and list all files in `docs/lines/<slug>/`. Ask the user whether the line is `complete` or `stopped` and agree on the one-line answer.
+2. **Finalize line documents:**
+{%- if doc_profile == "research" %}
+   - Confirm every `prespec-*.md` is `recorded` (with §5 Outcomes filled) or `withdrawn`.
+   - Finalize `docs/lines/<slug>/results.md` (create it via `python scripts/docs.py new results <slug>` if missing): cover every step's outcome without adding new estimates, bump `updated`, and set `state: final`.
+   - Update any doc that declares `depends_on: [results.md]` (such as `outline.md` or `literature.md`) in the same commit, bump its `updated` date, and set `state: final` if finished.
+{%- else %}
+   - Update `docs/lines/<slug>/spec.md` (if present) to `state: implemented` or `dropped` and bump `updated`.
+{%- endif %}
+   - Review `docs/lines/<slug>/notes/*.md`: set completed notes to `state: record`, or `state: superseded` with a link to what replaced them.
+3. **Check notebooks.** In `notebooks/<slug>/`, remove unpromoted exploratory notebooks, verify runs of record keep their outputs{% if restricted_data %} (unless they read restricted data){% endif %}, and update `notebooks/README.md` if needed.
+4. **Update the charter.** Edit `docs/lines/<slug>/README.md`:
+   - Set `state: complete` or `state: stopped`.
+   - Put the one-line answer in `summary` and the **State** paragraph.
+   - Bump `updated` to today's date.
+   - Keep the folder and slug unchanged (never rename closed lines).
+5. **Regenerate indexes and run checks:**
+   ```bash
+   python scripts/docs.py index
+   python scripts/docs.py check
+   ruff check .
+   pytest -q
+   ```
+6. **Commit and merge only when asked.** Report the final status and diff to the user; ask before committing and before merging `line/<slug>` into `main`. Once closed, record any later corrections in a dated note rather than editing recorded results.

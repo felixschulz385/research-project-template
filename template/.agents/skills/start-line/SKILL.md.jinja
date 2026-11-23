@@ -1,0 +1,40 @@
+---
+name: start-line
+description: Start a new line of work with its charter, branch, generated indexes, and initial setup. Use when beginning a new research question, fork, or follow-up line.
+---
+
+# Start a line of work
+
+Follow the project's rules in `AGENTS.md` and `docs/conventions.md`.
+
+## Steps
+
+1. **Pick a permanent slug.** Choose a short lowercase hyphenated `<slug>` naming what the line is (never status or order). Check `docs/ideas.md` to see whether an existing idea entry should link to this line.
+2. **Confirm the scope.** If the slug, title, question, why-now motivation, or scope is unclear, ask the user before creating files.
+3. **Create the branch.** From `main`, create and switch to `line/<slug>`.
+4. **Scaffold the charter.** Run:
+   ```bash
+   python scripts/docs.py new line <slug> --title "<Title>"
+   ```
+   This creates `docs/lines/<slug>/README.md` from `docs/templates/charter.md`.
+5. **Fill in the charter.** Keep it to one screen: update `summary`, **Question**, **Why now**, **Scope**, **State**, and **Next**. Leave `state: proposed` until work begins, or set `state: active` if starting immediately. If the line came from `docs/ideas.md`, point that entry to `lines/<slug>/`.
+6. **Regenerate indexes and check.** Run:
+   ```bash
+   python scripts/docs.py index
+   python scripts/docs.py check
+   ```
+   Confirm the line appears in `AGENTS.md`, `README.md`, and `docs/README.md`.
+{% if doc_profile == "research" -%}
+7. **Draft the first pre-spec before running anything.** Before any code loads an outcome, use the `write-prespec` skill to create `docs/lines/<slug>/prespec-<name>.md` and get the author's decisions confirmed.
+{% else -%}
+7. **Draft the specification before building.** Create `docs/lines/<slug>/spec.md` with:
+   ```bash
+   python scripts/docs.py new spec <slug> --title "<Title>"
+   ```
+   Fill it in from `docs/templates/spec.md` and agree on it with the user before implementation.
+{% endif -%}
+8. **Place code, notebooks, and figures by slug** when work begins:
+   - Analysis module(s): `src/{{ package }}/analysis/<slug>*.py` (importing shared setup from `src/{{ package }}/analysis/spec.py`).
+   - Notebooks: `notebooks/<slug>/` (add a row to `notebooks/README.md`).
+   - Tracked figures: `output/figures/<slug>/`.
+9. **Commit only when asked.** Summarize the new charter and branch for the user, and wait for confirmation before committing.
