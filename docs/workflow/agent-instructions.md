@@ -1,7 +1,7 @@
 ---
 type: rule
 state: current
-updated: 2026-11-16
+updated: 2026-11-23
 area: workflow
 applies: always
 summary: "AGENTS.md holds rules and pointers for coding agents; its state table is generated; CLAUDE.md imports it"
@@ -25,7 +25,8 @@ every session, so it holds rules and pointers only:
 | Docs conventions | a pointer to `docs/conventions.md` and the rules agents most often need |
 
 What stays out: status and results (in charters and results pages), estimates, session history
-(commit messages, dated notes), and anything a module docstring can say.
+(commit messages, dated notes), multi-step task procedures (in `.agents/skills/`, see
+[`agent-skills.md`](agent-skills.md)), and anything a module docstring can say.
 
 If the agent keeps its own memory outside the repository, it holds what the repository cannot:
 the user's preferences and decisions about how to work, and pointers.

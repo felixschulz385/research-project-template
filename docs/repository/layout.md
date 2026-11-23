@@ -1,7 +1,7 @@
 ---
 type: rule
 state: current
-updated: 2026-11-16
+updated: 2026-11-23
 area: repository
 applies: always
 summary: "The directory tree: a real package under src/<package>/, notebooks at the top, docs by line of work"
@@ -18,6 +18,8 @@ summary: "The directory tree: a real package under src/<package>/, notebooks at 
 ├── environment.yml                 # conda input; conda-lock.yml is the lock
 ├── .github/workflows/tests.yml     # docs, lint, tests
 ├── .githooks/                      # notebook outputs, restricted data, docs check
+├── .agents/skills/                 # Agent Skills (SKILL.md); see workflow/agent-skills.md
+├── .claude/skills -> ../.agents/skills
 ├── docs/                           # see workflow/documentation.md
 ├── src/<package>/
 │   ├── __init__.py

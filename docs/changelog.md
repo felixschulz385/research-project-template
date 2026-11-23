@@ -1,12 +1,17 @@
 ---
 type: index
 state: current
-updated: 2026-11-16
+updated: 2026-11-23
 summary: "What changed in the template, and why"
 ---
 
 # Changelog
 
+- **2026-11-23.** Added Agent Skills in rendered projects (`.agents/skills/<name>/SKILL.md`,
+  symlinked from `.claude/skills`, with `_preserve_symlinks: true` in `copier.yml` and an
+  exception in `.gitignore`): `start-line`, `write-prespec` (research profile), `add-source`
+  (pipeline projects), `end-line`, and `tidy-repo`. Documented the decision in
+  `docs/workflow/agent-skills.md` and pointed `AGENTS.md` and `docs/repository/layout.md` to it.
 - **2026-11-16.** Rules regrouped by concern (workflow, repository, pipeline, analysis, modules)
   without numbers; every rule with the same sections and a header; the index and the list of
   per-project choices generated. The template is a copier template (`copier copy`,

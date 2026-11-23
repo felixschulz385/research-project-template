@@ -1,7 +1,7 @@
 ---
 type: index
 state: current
-updated: 2026-11-16
+updated: 2026-11-23
 summary: "The rules, grouped by concern, with reading paths; tables generated from each rule's header"
 ---
 
@@ -25,6 +25,7 @@ says when a rule is relevant.
   [`pipeline/configuration.md`](pipeline/configuration.md) →
   [`pipeline/verification.md`](pipeline/verification.md).
 - **A coding agent's first session:** [`workflow/agent-instructions.md`](workflow/agent-instructions.md)
+  → [`workflow/agent-skills.md`](workflow/agent-skills.md)
   → [`workflow/documentation.md`](workflow/documentation.md).
 - **Cleaning up:** [`repository/storage-and-hygiene.md`](repository/storage-and-hygiene.md).
 
@@ -34,6 +35,7 @@ says when a rule is relevant.
 | Doc | Summary | Applies |
 |---|---|---|
 | [agent-instructions](workflow/agent-instructions.md) | AGENTS.md holds rules and pointers for coding agents; its state table is generated; CLAUDE.md imports it | always |
+| [agent-skills](workflow/agent-skills.md) | Recurring task procedures live as Agent Skills in .agents/skills/, symlinked from .claude/skills, in short tool-neutral prose | always |
 | [documentation](workflow/documentation.md) | Docs by line of work, a type and a state in every doc's header, generated tables, and a checker in the hook and CI | always |
 | [lines-of-work](workflow/lines-of-work.md) | A line of work is one question with its own life cycle; its slug names its docs, branch, code and notebooks | always |
 | [prespecification](workflow/prespecification.md) | Each step's rules are written and confirmed before it loads an outcome; changes go through a dated change log | research profile |

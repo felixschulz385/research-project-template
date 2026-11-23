@@ -1,7 +1,7 @@
 ---
 type: index
 state: current
-updated: 2026-11-16
+updated: 2026-11-23
 summary: "Every choice a new project must make, collected from the rules' Per-project choices sections"
 ---
 
@@ -68,6 +68,11 @@ in the rules; record the others in the project's first design record or first ch
 **[Agent instructions](workflow/agent-instructions.md)**
 
 - The hard rules that apply (restricted data, if any) and the environment notes.
+
+**[Agent skills](workflow/agent-skills.md)**
+
+- Additional project-specific skills under `.agents/skills/` (for example, domain-specific build
+  or submission procedures).
 
 **[Documentation](workflow/documentation.md)**
 
