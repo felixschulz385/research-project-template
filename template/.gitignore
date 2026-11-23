@@ -17,7 +17,9 @@ restricted/
 # Editor / agent / OS artifacts (._* are macOS metadata files on network mounts)
 .vscode/
 .codex
-.claude/
+.claude/*
+# Relative symlink to ../.agents/skills (checked in)
+!.claude/skills
 .DS_Store
 ._*
 

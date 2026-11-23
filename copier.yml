@@ -3,6 +3,7 @@
 _subdirectory: template
 _min_copier_version: "9.0"
 _answers_file: .copier-answers.yml
+_preserve_symlinks: true
 
 project_name:
   type: str
