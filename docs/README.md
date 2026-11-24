@@ -46,6 +46,7 @@ says when a rule is relevant.
 <!-- docs:begin docs dir=repository columns=summary,applies -->
 | Doc | Summary | Applies |
 |---|---|---|
+| [environment-pixi](repository/environment-pixi.md) | Planned: pixi.toml and pixi.lock replace environment.yml and conda-lock.yml; not applied yet | always |
 | [environment](repository/environment.md) | environment.yml is the input, conda-lock.yml the reproducible lock; repository tools need only the standard library | always |
 | [hooks-and-ci](repository/hooks-and-ci.md) | CI runs the docs check, ruff and pytest; opt-in git hooks block notebook outputs, Stata licence lines, restricted data and inconsistent docs | always |
 | [layout](repository/layout.md) | The directory tree: a real package under src/<package>/, notebooks at the top, docs by line of work | always |

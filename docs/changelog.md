@@ -7,6 +7,9 @@ summary: "What changed in the template, and why"
 
 # Changelog
 
+- **2026-11-24.** Recorded the planned move from conda to pixi as a proposed rule,
+  `docs/repository/environment-pixi.md`: what replaces `environment.yml` and `conda-lock.yml`,
+  the files to change, the order for existing projects, and the open HPC question. Not applied.
 - **2026-11-24.** The `start-line` and `end-line` skills name the default branch from
   `AGENTS.md` instead of `main` (noise-pollution uses `master`). CI checks the skills of both
   rendered projects: the `.claude/skills` symlink, `name` equal to the folder, a non-empty

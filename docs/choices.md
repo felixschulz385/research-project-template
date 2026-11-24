@@ -44,6 +44,11 @@ in the rules; record the others in the project's first design record or first ch
 
 - Which checks each source needs.
 
+**[Environment with pixi (planned)](repository/environment-pixi.md)**
+
+- The platforms in `pixi.toml`.
+- The Python version (copier asks; 3.11 or later).
+
 **[Environment](repository/environment.md)**
 
 - The platforms in the lock (`-p linux-64 -p osx-arm64` by default).
