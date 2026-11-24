@@ -49,3 +49,15 @@ jobs:
           ruff check .
           pip install --no-deps -e .
           pytest -q
+      - name: Skills are valid
+        working-directory: ${{ runner.temp }}/p
+        run: |
+          test -L .claude/skills && test "$(readlink .claude/skills)" = ../.agents/skills
+          test -n "$(ls .agents/skills)"
+          for f in .agents/skills/*/SKILL.md; do
+            d=$(basename "$(dirname "$f")")
+            grep -qx "name: $d" "$f" || { echo "::error file=$f::name does not match folder $d"; exit 1; }
+            grep -q '^description: .' "$f" || { echo "::error file=$f::empty description"; exit 1; }
+            if grep -nE '\{[%{#]' "$f"; then echo "::error file=$f::unrendered Jinja"; exit 1; fi
+          done
+          test -z "$(find .agents/skills -name '*.jinja')"

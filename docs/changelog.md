@@ -7,6 +7,10 @@ summary: "What changed in the template, and why"
 
 # Changelog
 
+- **2026-11-24.** The `start-line` and `end-line` skills name the default branch from
+  `AGENTS.md` instead of `main` (noise-pollution uses `master`). CI checks the skills of both
+  rendered projects: the `.claude/skills` symlink, `name` equal to the folder, a non-empty
+  `description`, and no leftover Jinja.
 - **2026-11-24.** Added a Stata licence guard to `.githooks/` (`check-stata-license.py` in
   `pre-commit`, `scrub-stata-license.py` to strip licence lines from existing notebooks in place,
   and `tests/scripts/test_stata_license_hook.py`), and documented starting `pystata` with

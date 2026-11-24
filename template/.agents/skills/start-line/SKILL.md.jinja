@@ -11,7 +11,7 @@ Follow the project's rules in `AGENTS.md` and `docs/conventions.md`.
 
 1. **Pick a permanent slug.** Choose a short lowercase hyphenated `<slug>` naming what the line is (never status or order). Check `docs/ideas.md` to see whether an existing idea entry should link to this line.
 2. **Confirm the scope.** If the slug, title, question, why-now motivation, or scope is unclear, ask the user before creating files.
-3. **Create the branch.** From `main`, create and switch to `line/<slug>`.
+3. **Create the branch.** From the default branch named in `AGENTS.md` (usually `main`; some projects use `master`), create and switch to `line/<slug>`.
 4. **Scaffold the charter.** Run:
    ```bash
    python scripts/docs.py new line <slug> --title "<Title>"
