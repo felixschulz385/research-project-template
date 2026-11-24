@@ -62,6 +62,8 @@ index`; edit a charter, not this table. Each line's next step is in its charter.
   `src/{{ package }}/analysis/<slug>*.py`.
 - **Notebooks:** `notebooks/<slug>/`; they find the project root by searching upward for
   `pyproject.toml` and keep their outputs (runs of record){% if restricted_data %} unless they read restricted data{% endif %}.
+- **Stata:** notebooks that start Stata use `config.init(edition, splash=False)`; the pre-commit
+  hook blocks licence lines; fix with `python .githooks/scrub-stata-license.py <notebook>`.
 
 ## Docs conventions
 
