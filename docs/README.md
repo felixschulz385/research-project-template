@@ -47,7 +47,7 @@ says when a rule is relevant.
 | Doc | Summary | Applies |
 |---|---|---|
 | [environment](repository/environment.md) | environment.yml is the input, conda-lock.yml the reproducible lock; repository tools need only the standard library | always |
-| [hooks-and-ci](repository/hooks-and-ci.md) | CI runs the docs check, ruff and pytest; opt-in git hooks block notebook outputs, restricted data and inconsistent docs | always |
+| [hooks-and-ci](repository/hooks-and-ci.md) | CI runs the docs check, ruff and pytest; opt-in git hooks block notebook outputs, Stata licence lines, restricted data and inconsistent docs | always |
 | [layout](repository/layout.md) | The directory tree: a real package under src/<package>/, notebooks at the top, docs by line of work | always |
 | [storage-and-hygiene](repository/storage-and-hygiene.md) | What git tracks and what it doesn't, the data root, scratch, and how to clean up (archive tags, one-off scripts, macOS metadata) | always |
 | [testing](repository/testing.md) | tests/ mirrors the package; no __init__.py; test files never import each other; shared setup is fixtures | always |

@@ -1,11 +1,18 @@
 ---
 type: index
 state: current
-updated: 2026-11-23
+updated: 2026-11-24
 summary: "What changed in the template, and why"
 ---
 
 # Changelog
+
+- **2026-11-24.** Added a Stata licence guard to `.githooks/` (`check-stata-license.py` in
+  `pre-commit`, `scrub-stata-license.py` to strip licence lines from existing notebooks in place,
+  and `tests/scripts/test_stata_license_hook.py`), and documented starting `pystata` with
+  `config.init(edition, splash=False)` in `docs/repository/hooks-and-ci.md` and `AGENTS.md`.
+  Learned in noise-pollution: Stata's startup banner printed the licence serial number into
+  notebook outputs that reached a public repository.
 
 - **2026-11-23.** Added Agent Skills in rendered projects (`.agents/skills/<name>/SKILL.md`,
   symlinked from `.claude/skills`, with `_preserve_symlinks: true` in `copier.yml` and an

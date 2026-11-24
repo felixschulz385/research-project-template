@@ -1,10 +1,10 @@
 ---
 type: rule
 state: current
-updated: 2026-11-16
+updated: 2026-11-24
 area: repository
 applies: always
-summary: "CI runs the docs check, ruff and pytest; opt-in git hooks block notebook outputs, restricted data and inconsistent docs"
+summary: "CI runs the docs check, ruff and pytest; opt-in git hooks block notebook outputs, Stata licence lines, restricted data and inconsistent docs"
 ---
 
 # Hooks and CI
@@ -23,21 +23,25 @@ Anything published (a site, a release) gets its own workflow, added once there i
 publish.
 
 **Git hooks** live in `.githooks/`, enabled once per clone with `./.githooks/install.sh` (opt-in,
-since `core.hooksPath` is not cloned). `pre-commit` runs three standard-library checks:
+since `core.hooksPath` is not cloned). `pre-commit` runs four standard-library checks:
 
 | Check | Blocks | Configure |
 |---|---|---|
 | `check-notebook-outputs.py` | outputs in staged notebooks not whitelisted, and in any notebook whose code reads restricted data | `notebook-output-whitelist.txt` (`notebooks/*` keep outputs) |
+| `check-stata-license.py` | Stata licence lines (`Serial number:` / `Licensed to:`) in staged notebook outputs; scrub existing notebooks with `python .githooks/scrub-stata-license.py <notebook>` | — |
 | `check-restricted.py` | files under `restricted/`, data files, and figures named after restricted data | `restricted-patterns.txt`, `restricted-allowlist.txt` |
 | `scripts/docs.py check` | the documentation conventions | `docs/docs.toml` |
+
+Start Stata through `pystata` with `config.init(edition, splash=False)`, because the banner prints
+the licence serial number.
 
 Formatting is not enforced at commit time; `ruff format` may be run by hand.
 
 ## Why
 
 Lint in CI catches dead imports and undefined names cheaply; the source project removed them by
-hand in a cleanup. Hooks catch what CI would catch too late: restricted data that has reached
-history is expensive to remove.
+hand in a cleanup. Hooks catch what CI would catch too late: restricted data or licence details
+that have reached history are expensive to remove.
 
 ## How
 
