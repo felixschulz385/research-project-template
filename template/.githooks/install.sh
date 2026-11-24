@@ -3,4 +3,4 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 git config core.hooksPath .githooks
-echo "core.hooksPath -> .githooks (notebook outputs, restricted data, docs check)"
+echo "core.hooksPath -> .githooks (notebook outputs, Stata licence lines, restricted data, docs check)"
